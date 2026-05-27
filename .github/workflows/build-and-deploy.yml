@@ -76,7 +76,7 @@ jobs:
               az containerapp job update `
                   -n $env:APP_NAME `
                   -g $env:AZURE_GROUP_DELIVERY `
-                  --image "myoung34/github-runner:$env:GITHUB_RUNNER_CONTAINER_IMAGE_TAG" `
+                  --image $env:GITHUB_RUNNER_CONTAINER_IMAGE_TAG":"$env:GITHUB_RUNNER_CONTAINER_IMAGE_TAG `
                   --set-env-vars "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL";
           }
 
