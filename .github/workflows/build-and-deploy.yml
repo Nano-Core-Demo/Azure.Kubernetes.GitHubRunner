@@ -44,7 +44,7 @@ jobs:
       - name: Deploy GitHub Self-Hosted Runner
         shell: pwsh
         run: |
-          $JobExists = az containerapp job show -g $env:AZURE_GROUP_DELIVERY -n $env:GITHUB_RUNNER_JOB_NAME --query name -o tsv --only-show-errors
+          $JobExists = az containerapp job show -g $env:AZURE_GROUP_DELIVERY -n $env:APP_NAME --query name -o tsv --only-show-errors
 
           if (-not $JobExists) 
           {
