@@ -98,7 +98,6 @@ jobs:
                   --scale-rule-auth "appKey=github-app-key-secret" `
                   --cpu 2 `
                   --memory 4Gi `
-                  --secrets "github-app-key-secret=$env:GITHUB_RUNNER_KEY" `
                   --env-vars "GH_OWNER=$env:GITHUB_RUNNER_OWNER" "GH_ORG=$env:GITHUB_RUNNER_OWNER" "APP_ID=$env:GITHUB_RUNNER_APP_ID" "APP_PRIVATE_KEY=secretref:github-app-key-secret" "EPHEMERAL=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL";
           }
 
