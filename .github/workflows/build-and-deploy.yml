@@ -48,6 +48,8 @@ jobs:
         run: |
           $JobExists = az containerapp job list -g $env:AZURE_GROUP_DELIVERY --query "[?name=='$env:APP_NAME'].name" -o tsv;
 
+          #make variables for all parameters
+
           if (-not $JobExists) 
           {
               $env:GITHUB_RUNNER_ENVIRONMENT_NAME = az containerapp env list -g $env:AZURE_GROUP_DELIVERY --query [0].name -o tsv;
@@ -98,7 +100,7 @@ jobs:
                   --scale-rule-auth "appKey=github-app-key-secret" `
                   --cpu 2 `
                   --memory 4Gi `
-                  --env-vars "GH_OWNER=$env:GITHUB_RUNNER_OWNER" "GH_ORG=$env:GITHUB_RUNNER_OWNER" "APP_ID=$env:GITHUB_RUNNER_APP_ID" "APP_PRIVATE_KEY=secretref:github-app-key-secret" "EPHEMERAL=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL";
+                  --set-env-vars "GH_OWNER=$env:GITHUB_RUNNER_OWNER" "GH_ORG=$env:GITHUB_RUNNER_OWNER" "APP_ID=$env:GITHUB_RUNNER_APP_ID" "APP_PRIVATE_KEY=secretref:github-app-key-secret" "EPHEMERAL=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL";
           }
 
       - name: GitHub Release
