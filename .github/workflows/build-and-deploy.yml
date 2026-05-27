@@ -13,7 +13,7 @@ env:
   AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }} 
   AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }} 
   AZURE_GROUP_KUBERNETES: ${{ vars.AZURE_RESOURCE_GROUP_KUBERNETES }} 
-  AZURE_GROUP_DELIVERY: ${{ vars.AZURE_RESOURCE_GROUP_CI }} 
+  AZURE_GROUP_DELIVERY: ${{ vars.AZURE_RESOURCE_GROUP_DELIVERY }} 
   AZURE_SUBSCRIPTION_ID: ${{ github.ref == 'refs/heads/master' && secrets.PRODUCTION_AZURE_SUBSCRIPTION_ID || secrets.STAGING_AZURE_SUBSCRIPTION_ID }}
   GITHUB_RUNNER_CONTAINER_IMAGE: ubuntu-22.04
   GITHUB_RUNNER_OWNER: ${{ github.repository_owner }}
@@ -48,7 +48,7 @@ jobs:
 
           if (-not $JobExists) 
           {
-              $env:GITHUB_RUNNER_ENVIRONMENT_NAME = az containerapp env list -g $env:AZURE_GROUP_DELIVERY --query [0].name;
+              $env:GITHUB_RUNNER_ENVIRONMENT_NAME = az containerapp env list -g $env:AZURE_GROUP_DELIVERY --query [0].name -o tsv;
 
               az containerapp job create `
                   --name $env:APP_NAME `
