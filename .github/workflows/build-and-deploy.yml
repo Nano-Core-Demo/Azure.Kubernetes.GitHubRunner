@@ -48,7 +48,7 @@ jobs:
         run: |
           $JobExists = az containerapp job list -g $env:AZURE_GROUP_DELIVERY --query "[?name=='$env:APP_NAME'].name" -o tsv;
 
-          #make variables for all parameters
+          #make variables for all parameters. and remove really static ones from update like --scale-rule-type "github-runner"
 
           if (-not $JobExists) 
           {
@@ -65,7 +65,7 @@ jobs:
                   --min-executions 0 `
                   --max-executions 10 `
                   --scale-rule-name $env:APP_NAME-scaler `
-                  --scale-rule-type "github-runner" `
+                  --scale-rule-type github-runner `
                   --scale-rule-metadata `
                       "owner=$env:GITHUB_RUNNER_OWNER" `
                       "runnerScope=org" `
@@ -85,12 +85,8 @@ jobs:
                   -n $env:APP_NAME `
                   -g $env:AZURE_GROUP_DELIVERY `
                   --image "${env:GITHUB_RUNNER_CONTAINER_IMAGE}:${env:GITHUB_RUNNER_CONTAINER_IMAGE_TAG}" `
-                  --replica-timeout 1800 `
-                  --replica-retry-limit 1 `
                   --min-executions 0 `
                   --max-executions 10 `
-                  --scale-rule-name $env:APP_NAME-scaler `
-                  --scale-rule-type "github-runner" `
                   --scale-rule-metadata `
                       "owner=$env:GITHUB_RUNNER_OWNER" `
                       "runnerScope=org" `
@@ -100,6 +96,7 @@ jobs:
                   --scale-rule-auth "appKey=github-app-key-secret" `
                   --cpu 2 `
                   --memory 4Gi `
+                  --polling-interval 31 `
                   --set-env-vars "GH_OWNER=$env:GITHUB_RUNNER_OWNER" "GH_ORG=$env:GITHUB_RUNNER_OWNER" "APP_ID=$env:GITHUB_RUNNER_APP_ID" "APP_PRIVATE_KEY=secretref:github-app-key-secret" "EPHEMERAL=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL";
           }
 
