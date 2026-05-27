@@ -64,7 +64,11 @@ jobs:
                   --max-executions 10 `
                   --scale-rule-name "github-runner-scaler" `
                   --scale-rule-type "github-runner" `
-                  --scale-rule-metadata "owner=$env:GITHUB_RUNNER_OWNER runnerScope=org applicationID=$env:GITHUB_RUNNER_APP_ID installationID=$env:GITHUB_RUNNER_INSTALLATION_ID" `
+                  --scale-rule-metadata `
+                      "owner=$env:GITHUB_RUNNER_OWNER" `
+                      "runnerScope=org" `
+                      "applicationID=$env:GITHUB_RUNNER_APP_ID" `
+                      "installationID=$env:GITHUB_RUNNER_INSTALLATION_ID" `
                   --scale-rule-auth "appKey=github-app-key-secret" `
                   --cpu 2 `
                   --memory 4Gi `
