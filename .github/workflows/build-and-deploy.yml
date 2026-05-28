@@ -78,7 +78,8 @@ jobs:
                   --memory 4Gi `
                   --polling-interval 30 `
                   --secrets "github-app-key-secret=$SecureKeyString" `
-                  --env-vars "GH_OWNER=$env:GITHUB_RUNNER_OWNER" "GH_ORG=$env:GITHUB_RUNNER_OWNER" "APP_ID=$env:GITHUB_RUNNER_APP_ID" "APP_PRIVATE_KEY=secretref:github-app-key-secret" "APP_LOGIN=$env:GITHUB_RUNNER_OWNER" "EPHEMERAL=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL" "RUNNER_SCOPE=org" "ORG_NAME=$env:GITHUB_RUNNER_OWNER";
+                  --env-vars "ACCESS_TOKEN=secretref:github-app-key-secret" "EPHEMERAL=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL" "RUNNER_SCOPE=org" "ORG_NAME=$env:GITHUB_RUNNER_OWNER";
+                  #--env-vars "GH_OWNER=$env:GITHUB_RUNNER_OWNER" "GH_ORG=$env:GITHUB_RUNNER_OWNER" "APP_ID=$env:GITHUB_RUNNER_APP_ID" "APP_PRIVATE_KEY=secretref:github-app-key-secret" "APP_LOGIN=$env:GITHUB_RUNNER_OWNER" "EPHEMERAL=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL" "RUNNER_SCOPE=org" "ORG_NAME=$env:GITHUB_RUNNER_OWNER";
           } 
           else 
           {
@@ -98,7 +99,8 @@ jobs:
                   --cpu 2 `
                   --memory 4Gi `
                   --polling-interval 30 `
-                  --set-env-vars "GH_OWNER=$env:GITHUB_RUNNER_OWNER" "GH_ORG=$env:GITHUB_RUNNER_OWNER" "APP_ID=$env:GITHUB_RUNNER_APP_ID" "APP_PRIVATE_KEY=secretref:github-app-key-secret" "APP_LOGIN=$env:GITHUB_RUNNER_OWNER" "EPHEMERAL=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL" "RUNNER_SCOPE=org" "ORG_NAME=$env:GITHUB_RUNNER_OWNER";
+                  --set-env-vars "ACCESS_TOKEN=secretref:github-app-key-secret" "EPHEMERAL=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL"¨"RUNNER_SCOPE=org" "ORG_NAME=$env:GITHUB_RUNNER_OWNER";
+                  #--set-env-vars "GH_OWNER=$env:GITHUB_RUNNER_OWNER" "GH_ORG=$env:GITHUB_RUNNER_OWNER" "APP_ID=$env:GITHUB_RUNNER_APP_ID" "APP_PRIVATE_KEY=secretref:github-app-key-secret" "APP_LOGIN=$env:GITHUB_RUNNER_OWNER" "EPHEMERAL=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL" "RUNNER_SCOPE=org" "ORG_NAME=$env:GITHUB_RUNNER_OWNER";
           }
 
       - name: GitHub Release
