@@ -21,8 +21,14 @@ env:
   GITHUB_RUNNER_APP_ID: ${{ secrets.GITHUBRUNNER_APP_ID }}
   GITHUB_RUNNER_INSTALLATION_ID: ${{ secrets.GITHUBRUNNER_INSTALLATION_ID }}
   GITHUB_RUNNER_KEY: ${{ secrets.GITHUBRUNNER_KEY }}
-  GITHUB_RUNNER_PAT: ${{ secrets.TEST_ACCESS_TOKEN }}
   GITHUB_RUNNER_ENV_LABEL: ${{ github.ref == 'refs/heads/master' && 'Production' || 'Staging' }}
+  GITHUB_RUNNER_REPLICA_TIMEOUT: 600
+  GITHUB_RUNNER_REPLICA_RETRY_LIMIT: 1
+  GITHUB_RUNNER_MIN_EXECUTIONS: 0
+  GITHUB_RUNNER_MAX_EXECUTIONS: 10
+  GITHUB_RUNNER_CPU: 2
+  GITHUB_RUNNER_MEMORY: 4Gi
+  GITHUB_RUNNER_POLLING_INTERVAL: 30
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -49,9 +55,6 @@ jobs:
         run: |
           $JobExists = az containerapp job list -g $env:AZURE_GROUP_DELIVERY --query "[?name=='$env:APP_NAME'].name" -o tsv;
 
-          $SecureKeyString = $env:GITHUB_RUNNER_PAT # GITHUB_RUNNER_KEY
-          #make variables for all parameters. and remove really static ones from update like --scale-rule-type "github-runner"
-
           if (-not $JobExists) 
           {
               $env:GITHUB_RUNNER_ENVIRONMENT_NAME = az containerapp env list -g $env:AZURE_GROUP_DELIVERY --query [0].name -o tsv;
@@ -62,10 +65,10 @@ jobs:
                   --trigger-type Event `
                   --environment $env:GITHUB_RUNNER_ENVIRONMENT_NAME `
                   --image "${env:GITHUB_RUNNER_CONTAINER_IMAGE}:${env:GITHUB_RUNNER_CONTAINER_IMAGE_TAG}" `
-                  --replica-timeout 1800 `
-                  --replica-retry-limit 1 `
-                  --min-executions 0 `
-                  --max-executions 10 `
+                  --replica-timeout $env:GITHUB_RUNNER_REPLICA_TIMEOUT `
+                  --replica-retry-limit $env:GITHUB_RUNNER_REPLICA_RETRY_LIMIT `
+                  --min-executions $env:GITHUB_RUNNER_MIN_EXECUTIONS `
+                  --max-executions $env:GITHUB_RUNNER_MAX_EXECUTIONS `
                   --scale-rule-name $env:APP_NAME-scaler `
                   --scale-rule-type github-runner `
                   --scale-rule-metadata `
@@ -75,12 +78,11 @@ jobs:
                       "installationID=$env:GITHUB_RUNNER_INSTALLATION_ID" `
                       "labels=$env:GITHUB_RUNNER_ENV_LABEL" `
                   --scale-rule-auth "appKey=github-app-key-secret" `
-                  --cpu 2 `
-                  --memory 4Gi `
-                  --polling-interval 30 `
-                  --secrets "github-app-key-secret=$SecureKeyString" `
-                  --env-vars "ACCESS_TOKEN=secretref:github-app-key-secret" "EPHEMERAL=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL" "RUNNER_SCOPE=org" "ORG_NAME=$env:GITHUB_RUNNER_OWNER";
-                  #--env-vars "GH_OWNER=$env:GITHUB_RUNNER_OWNER" "GH_ORG=$env:GITHUB_RUNNER_OWNER" "APP_ID=$env:GITHUB_RUNNER_APP_ID" "APP_PRIVATE_KEY=secretref:github-app-key-secret" "APP_LOGIN=$env:GITHUB_RUNNER_OWNER" "EPHEMERAL=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL" "RUNNER_SCOPE=org" "ORG_NAME=$env:GITHUB_RUNNER_OWNER";
+                  --cpu $env:GITHUB_RUNNER_CPU `
+                  --memory $env:GITHUB_RUNNER_MEMORY `
+                  --polling-interval $env:GITHUB_RUNNER_POLLING_INTERVAL `
+                  --secrets "github-app-key-secret=$env:GITHUB_RUNNER_KEY" `
+                  --env-vars "APP_ID=$env:GITHUB_RUNNER_APP_ID" "APP_PRIVATE_KEY=secretref:github-app-key-secret" "APP_LOGIN=$env:GITHUB_RUNNER_OWNER" "RUNNER_SCOPE=org" "ORG_NAME=$env:GITHUB_RUNNER_OWNER" "EPHEMERAL=true" "DEBUG_OUTPUT=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL";
           } 
           else 
           {
@@ -88,8 +90,10 @@ jobs:
                   -n $env:APP_NAME `
                   -g $env:AZURE_GROUP_DELIVERY `
                   --image "${env:GITHUB_RUNNER_CONTAINER_IMAGE}:${env:GITHUB_RUNNER_CONTAINER_IMAGE_TAG}" `
-                  --min-executions 0 `
-                  --max-executions 10 `
+                  --replica-timeout $env:GITHUB_RUNNER_REPLICA_TIMEOUT `
+                  --replica-retry-limit $env:GITHUB_RUNNER_REPLICA_RETRY_LIMIT `
+                  --min-executions $env:GITHUB_RUNNER_MIN_EXECUTIONS `
+                  --max-executions $env:GITHUB_RUNNER_MAX_EXECUTIONS `
                   --scale-rule-metadata `
                       "owner=$env:GITHUB_RUNNER_OWNER" `
                       "runnerScope=org" `
@@ -97,11 +101,10 @@ jobs:
                       "installationID=$env:GITHUB_RUNNER_INSTALLATION_ID" `
                       "labels=$env:GITHUB_RUNNER_ENV_LABEL" `
                   --scale-rule-auth "appKey=github-app-key-secret" `
-                  --cpu 2 `
-                  --memory 4Gi `
-                  --polling-interval 30 `
-                  --set-env-vars "ACCESS_TOKEN=secretref:github-app-key-secret" "EPHEMERAL=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL"¨"RUNNER_SCOPE=org" "ORG_NAME=$env:GITHUB_RUNNER_OWNER";
-                  #--set-env-vars "GH_OWNER=$env:GITHUB_RUNNER_OWNER" "GH_ORG=$env:GITHUB_RUNNER_OWNER" "APP_ID=$env:GITHUB_RUNNER_APP_ID" "APP_PRIVATE_KEY=secretref:github-app-key-secret" "APP_LOGIN=$env:GITHUB_RUNNER_OWNER" "EPHEMERAL=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL" "RUNNER_SCOPE=org" "ORG_NAME=$env:GITHUB_RUNNER_OWNER";
+                  --cpu $env:GITHUB_RUNNER_CPU `
+                  --memory $env:GITHUB_RUNNER_MEMORY `
+                  --polling-interval $env:GITHUB_RUNNER_POLLING_INTERVAL `
+                  --set-env-vars "APP_ID=$env:GITHUB_RUNNER_APP_ID" "APP_PRIVATE_KEY=secretref:github-app-key-secret" "APP_LOGIN=$env:GITHUB_RUNNER_OWNER" "RUNNER_SCOPE=org" "ORG_NAME=$env:GITHUB_RUNNER_OWNER" "EPHEMERAL=true" "DEBUG_OUTPUT=true" "RUNNER_LABELS=$env:GITHUB_RUNNER_ENV_LABEL";
           }
 
       - name: GitHub Release
