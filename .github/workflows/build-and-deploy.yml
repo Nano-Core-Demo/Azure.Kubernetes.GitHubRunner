@@ -76,7 +76,7 @@ jobs:
                       "runnerScope=org" `
                       "applicationID=$env:GITHUB_RUNNER_APP_ID" `
                       "installationID=$env:GITHUB_RUNNER_INSTALLATION_ID" `
-                      "runnerLabels=$env:GITHUB_RUNNER_ENV_LABEL" `
+                      "labels=$env:GITHUB_RUNNER_ENV_LABEL" `
                   --scale-rule-auth "appKey=github-app-key-secret" `
                   --cpu $env:GITHUB_RUNNER_CPU `
                   --memory $env:GITHUB_RUNNER_MEMORY `
@@ -99,7 +99,7 @@ jobs:
                       "runnerScope=org" `
                       "applicationID=$env:GITHUB_RUNNER_APP_ID" `
                       "installationID=$env:GITHUB_RUNNER_INSTALLATION_ID" `
-                      "runnerLabels=$env:GITHUB_RUNNER_ENV_LABEL" `
+                      "labels=$env:GITHUB_RUNNER_ENV_LABEL" `
                   --scale-rule-auth "appKey=github-app-key-secret" `
                   --cpu $env:GITHUB_RUNNER_CPU `
                   --memory $env:GITHUB_RUNNER_MEMORY `
